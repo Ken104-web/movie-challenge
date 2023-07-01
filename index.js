@@ -9,26 +9,32 @@ return fetch('http://localhost:3000/films')// Makes a GET request
  .then((json) => displayMovies(json));// Passes the movie date to displayMovies 
 }
 // Show the details of the first on the webpage
-function displayMovies(movies){
- const div = document.querySelector('div');
- div.innerHTML = ''; //clear the div element before rendering
- 
- let firstMovie = movies[0]; // Get the first movie from the array
- let { poster, title, runtime, showtime, tickets_sold } = firstMovie;
- let fullCapacity = 100; // Based on assumption
-
- let availableTickets = fullCapacity - tickets_sold;
- let movieDetailsHTML = `
- <div id='film'>
- <img src='${poster}' alt= 'Movie Poster'>
- <h2>${title}</h2>
- <p>Showtime: ${showtime}</p>
- <p>Available Tickecks: ${availableTickets}</p>
- </div>
- `;
- div.innerHTML = movieDetailsHTML;
- displayMenu()
-}
+function displayMovies(movies) {
+    const div = document.querySelector('div');
+    div.innerHTML = '';
+  
+    let firstMovie = movies[0];
+    let { poster, title, runtime, showtime, tickets_sold } = firstMovie;
+    let fullCapacity = 150;
+  
+    let availableTickets = fullCapacity - tickets_sold;
+  
+    let movieDetailsHTML = `
+      <div id='film'>
+        <img src='${poster}' alt='Movie Poster'>
+        <h2>${title}</h2>
+        <p>Showtime: ${showtime}</p>
+        <p>Available Tickets: <span id="ticketCount">${availableTickets}</span></p>
+        <button id="buyTicketButton" ${availableTickets === 0 ? 'disabled' : ''}>Buy Ticket</button>
+      </div>
+    `;
+  
+    div.innerHTML = movieDetailsHTML;
+  
+    const buyTicketButton = document.getElementById('buyTicketButton');
+    buyTicketButton.addEventListener('click', () => buyTicket(firstMovie));
+  }
+  
 function displayMenu(){
     // Make a GET request
  fetch('http://localhost:3000/films')
@@ -54,6 +60,19 @@ function movieList(films) {
     filmsList.innerHTML = ''; // Clear the existing content
     filmsList.insertAdjacentHTML('beforeend', showListHTML);
   }
+  function buyTicket(movie){
+    let { tickets_sold } = movie;
+    let fullCapacity = 100;
+
+    if (tickets_sold >= fullCapacity) {
+        alert('Sorry, sold out.');
+        return;
+    }
+    tickets_sold++;
+
+    const ticketCountElement = document.getElementById('ticketCount');
+    ticketCountElement.textContent = fullCapacity - tickets_sold;
+}
   
  
 
