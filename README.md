@@ -37,3 +37,5 @@ Make sure to update the server URL in the code if necessary.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+ ## Author 
+ Kenneth Mwangi
