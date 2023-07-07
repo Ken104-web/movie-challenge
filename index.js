@@ -1,5 +1,5 @@
 // Waiting for the DOM to load
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
     displayMenu(); // Display the movie list
     movieDetails(); // Display details of the first movie
 });
@@ -11,7 +11,7 @@ function movieDetails() {
         .then((json) => displayMovies(json)); // Passes the movie data to displayMovies function
 }
 
-// Display the details of the first movie on the webpage
+// Display the details of a movie on the webpage
 function displayMovies(movies) {
     const div = document.querySelector('div');
     div.innerHTML = '';
@@ -41,20 +41,21 @@ function displayMovies(movies) {
 
     const filmItems = document.querySelectorAll('.film-item');
     filmItems.forEach((filmItem, index) => {
-        filmItem.addEventListener('click', () => {
-            if (movies[index] && movies[index].id) {
-                const filmId = movies[index].id; // Get the movie ID from the movies array
-                fetch(`http://localhost:3000/films/${filmId}`) // Make a GET request for the specific movie
-                    .then((resp) => resp.json()) // Convert the response to JavaScript
-                    .then((json) => displayMovies([json])); // Pass the movie data to displayMovies
-            }
-        });
+        filmItem.removeEventListener('click', loadMovieDetails); // Remove previous event listeners
+        filmItem.addEventListener('click', loadMovieDetails); // Attach new event listeners
     });
+}
+
+// Load movie details when a movie list item is clicked
+function loadMovieDetails(event) {
+    const filmId = event.target.dataset.filmId; // Get the movie ID from the dataset
+    fetch(`http://localhost:3000/films/${filmId}`) // Make a GET request for the specific movie
+        .then((resp) => resp.json()) // Convert the response to JavaScript
+        .then((json) => displayMovies([json])); // Pass the movie data to displayMovies
 }
 
 // Fetch movie data and display movie list
 function displayMenu() {
-
     fetch('http://localhost:3000/films')
         .then((resp) => resp.json())
         .then((json) => movieList(json));
@@ -64,12 +65,17 @@ function displayMenu() {
 function movieList(films) {
     let showListHTML = '';
     films.forEach((film) => {
-        showListHTML += `<li class="film-item">${film.title}</li>`;
+        showListHTML += `<li class="film-item" data-film-id="${film.id}">${film.title}</li>`;
     });
 
     let filmsList = document.getElementById('films');
     filmsList.innerHTML = ''; // Clear the existing content
     filmsList.insertAdjacentHTML('beforeend', showListHTML);
+
+    const filmItems = document.querySelectorAll('.film-item');
+    filmItems.forEach((filmItem) => {
+        filmItem.addEventListener('click', loadMovieDetails);
+    });
 }
 
 // Buy a movie ticket
@@ -85,4 +91,7 @@ function buyTicket(movie) {
 
     const ticketCountElement = document.getElementById('ticketCount');
     ticketCountElement.textContent = fullCapacity - tickets_sold;
+
+    // Update the movie object with new ticket count
+    movie.tickets_sold = tickets_sold;
 }
