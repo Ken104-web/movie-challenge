@@ -29,6 +29,10 @@ To set up the project locally, follow these steps:
 5. Click on a movie in the list to view its details.
 6. Click on the "Buy Ticket" button to buy a ticket (if available).
 
+## Alternatively
+
+ you can click the link on the right side under the `about` section part
+ 
 ## API Server
 
 This application relies on a server to provide movie data. The server should respond to the following endpoints:
